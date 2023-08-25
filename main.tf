@@ -4,37 +4,41 @@ terraform {
       source = "tf.timeweb.cloud/timeweb-cloud/timeweb-cloud"
     }
   }
-  required_version = ">= 1.4.4"
+  required_version = ">= 1.5.3"
 
   backend "s3" {
     endpoint = "s3.timeweb.com"
     region = "ru-1"
     bucket = "1d90e41d-terraform-state"
     key  = "terraform.tfstate"
+    access_key = ""
+    secret_key = ""
+    skip_region_validation = true
+    skip_credentials_validation = true
     }
 }
 
 provider "twc" {
-  token = "<your token>"
+  token = ""
 }
 
-data "twc_configurator" "example-configurator" {
+data "twc_configurator" "configurator" {
   location = "ru-1"
 }
 
-data "twc_os" "example-os" {
+data "twc_os" "os" {
   name = "ubuntu"
-  version = "22.04"
+  version = "20.04"
 }
 
-resource "twc_server" "example-server" {
-  name = "Example server"
-  os_id = data.twc_os.example-os.id
+resource "twc_server" "my-timeweb-server" {
+  name = "My Timeweb Server"
+  os_id = data.twc_os.os.id
 
   configuration {
-    configurator_id = data.twc_configurator.example-configurator.id
-    disk = 1024 * 10
-    cpu = 1
-    ram = 1024
+    configurator_id = data.twc_configurator.configurator.id
+    disk = 102400
+    cpu = 2
+    ram = 1024 * 4
   }
 }
